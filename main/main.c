@@ -10,17 +10,16 @@ int main() {
 
     uint slice_num = pwm_gpio_to_slice_num(0);
     pwm_set_wrap(slice_num,10);
+    pwm_config config = pwm_get_default_config();
+    pwm_config_set_clkdiv(&config,2.f);
+    //pwm_config_set_clkdiv_int_frac(&config,255,15);
+    pwm_init(slice_num,&config,true);
+    pwm_set_gpio_level(0, 65534/2);
+    pwm_set_gpio_level(1, 65534/4);
 
     int duty=0;
     for(;;){
-        pwm_set_chan_level(slice_num, PWM_CHAN_A, duty);
-        pwm_set_chan_level(slice_num, PWM_CHAN_B, 4);
-        pwm_set_enabled(slice_num, true);
-        sleep_ms(400);
-        duty++;
-        if(duty > 10){
-            duty = 0;
-        }
+        tight_loop_contents();
     }
 
 
