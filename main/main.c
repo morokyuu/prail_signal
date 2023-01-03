@@ -2,6 +2,8 @@
 #include "pico/stdlib.h"
 #include "hardware/pwm.h"
 
+#include "state.h"
+
 const int PWM_PERIOD = 3300;
 
 const int IRLED_A = 2;
@@ -16,16 +18,7 @@ const char SENS_A = 0x01;
 const char SENS_B = 0x02;
 
 volatile bool timer_flag = false;
-volatile char sens_state = 0x00;
 int tim_count = 0;
-
-typedef enum{
-    NONE,
-    EDGE_DETECT,
-    BOTH_DETECT,
-    THROUGH
-} STATE;
-STATE state = NONE;
 
 
 bool repeating_timer_callback(struct repeating_timer *t){
@@ -33,7 +26,7 @@ bool repeating_timer_callback(struct repeating_timer *t){
     return true;
 }
 
-void sense(){
+void sense(char *sens_state){
     bool in_A;
     bool in_B;
 
@@ -50,7 +43,7 @@ void sense(){
     pwm_set_gpio_level(IRLED_B, PWM_PERIOD);
 
     if(in_A){
-        sens_state |= SENS_A;
+        *sens_state |= SENS_A;
         gpio_put(LED_BLUE,0);
     }
     else{
@@ -58,7 +51,7 @@ void sense(){
     }
 
     if(in_B){
-        sens_state |= SENS_B;
+        *sens_state |= SENS_B;
         gpio_put(LED_RED,0);
     }
     else{
@@ -102,35 +95,17 @@ int main() {
     struct repeating_timer timer;
     add_repeating_timer_ms(2,repeating_timer_callback,NULL,&timer);
 
+    proc_state_param_t st_param;
+
     while(1){
         while(!timer_flag);
         timer_flag = false;
 
-        sense();
-        printf("%d\n",sens_state);
+        sense(&(st_param.sens_state));
+        printf("%d\n",st_param.sens_state);
 
-        switch(state){
-            case NONE:
-                tim_count = 0;
-                if(sens_state){
-                    state = EDGE_DETECT;
-                    printf("edge = %d\n",sens_state);
-                }
-                break;
-            case EDGE_DETECT:
-                tim_count++;
-                if(tim_count > 100){
-                    printf("timeout %d\n",tim_count);
-                    state = NONE;
-                }
-                break;
-            case BOTH_DETECT:
-                break;
-            case THROUGH:
-                break;
-            default:
-                break;
-        }
+        proc_state(st_param);
+
     }
 
 
