@@ -2,22 +2,45 @@
 #include "pico/stdlib.h"
 #include "hardware/pwm.h"
 
+const int PWM_PERIOD = 3300;
+const int IRLED = 2;
+
+int blink = 0;
+bool repeating_timer_callback(struct repeating_timer *t){
+//    pwm_set_gpio_level(IRLED, (int)(PWM_PERIOD * 0.5));
+//    sleep_us(600*6);
+//    pwm_set_gpio_level(IRLED, PWM_PERIOD);
+
+    gpio_put(1,blink);
+    if(blink){
+        blink = 0;
+    }
+    else{
+        blink = 1;
+    }
+    return true;
+}
+
 int main() {
-    gpio_set_function(0,GPIO_FUNC_PWM);
-    gpio_set_function(1,GPIO_FUNC_PWM);
 
-    uint slice_num = pwm_gpio_to_slice_num(0);
+    //GPIO
+    gpio_init(1);
+    gpio_set_dir(1,GPIO_OUT);
 
+    //PWM
+    gpio_set_function(IRLED,GPIO_FUNC_PWM);
+    uint slice_num = pwm_gpio_to_slice_num(IRLED);
     pwm_config config;
     pwm_config_set_phase_correct(&config, false);
     pwm_config_set_clkdiv_int(&config, 1);
     pwm_config_set_clkdiv_mode(&config, PWM_DIV_FREE_RUNNING);
     pwm_config_set_output_polarity(&config, false, false);
-    pwm_config_set_wrap(&config, 3300);
-
+    pwm_config_set_wrap(&config, PWM_PERIOD);
     pwm_init(slice_num,&config,true);
-    pwm_set_gpio_level(0, (int)(3300 * 0.5));
-    pwm_set_gpio_level(1, (int)(3300 * 0.8));
+
+    //timer callback
+    struct repeating_timer timer;
+    add_repeating_timer_ms(1000,repeating_timer_callback,NULL,&timer);
 
     for(;;){
         tight_loop_contents();
