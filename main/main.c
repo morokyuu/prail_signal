@@ -11,11 +11,12 @@ bool repeating_timer_callback(struct repeating_timer *t){
 //    sleep_us(600*6);
 //    pwm_set_gpio_level(IRLED, PWM_PERIOD);
 
-    gpio_put(1,blink);
     if(blink){
+        pwm_set_gpio_level(IRLED, (int)(PWM_PERIOD * 0.3));
         blink = 0;
     }
     else{
+        pwm_set_gpio_level(IRLED, (int)(PWM_PERIOD * 0.5));
         blink = 1;
     }
     return true;
@@ -26,6 +27,7 @@ int main() {
     //GPIO
     gpio_init(1);
     gpio_set_dir(1,GPIO_OUT);
+    gpio_put(1,0);
 
     //PWM
     gpio_set_function(IRLED,GPIO_FUNC_PWM);
