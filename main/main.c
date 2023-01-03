@@ -16,10 +16,56 @@ const char SENS_A = 0x01;
 const char SENS_B = 0x02;
 
 volatile bool timer_flag = false;
+volatile char sens_state = 0x00;
+int tim_count = 0;
+
+typedef enum{
+    NONE,
+    EDGE_DETECT,
+    BOTH_DETECT,
+    THROUGH
+} STATE;
+STATE state = NONE;
+
 
 bool repeating_timer_callback(struct repeating_timer *t){
     timer_flag = true;
     return true;
+}
+
+void sense(){
+    bool in_A;
+    bool in_B;
+
+    pwm_set_gpio_level(IRLED_A, (int)(PWM_PERIOD * 0.5));
+    sleep_us(150);
+    in_A = gpio_get(SENS);
+    //sleep_us(50);
+    pwm_set_gpio_level(IRLED_A, PWM_PERIOD);
+
+    sleep_us(400);
+
+    pwm_set_gpio_level(IRLED_B, (int)(PWM_PERIOD * 0.5));
+    sleep_us(150);
+    in_B = gpio_get(SENS);
+    //sleep_us(50);
+    pwm_set_gpio_level(IRLED_B, PWM_PERIOD);
+
+    if(in_A){
+        sens_state |= SENS_A;
+        gpio_put(LED_BLUE,0);
+    }
+    else{
+        gpio_put(LED_BLUE,1);
+    }
+
+    if(in_B){
+        sens_state |= SENS_B;
+        gpio_put(LED_RED,0);
+    }
+    else{
+        gpio_put(LED_RED,1);
+    }
 }
 
 int main() {
@@ -40,7 +86,6 @@ int main() {
 
     gpio_init(SENS);
     gpio_set_dir(SENS,GPIO_IN);
-
 
     //PWM
     uint slice_num = pwm_gpio_to_slice_num(IRLED_A);
@@ -63,41 +108,31 @@ int main() {
         while(!timer_flag);
         timer_flag = false;
 
-        bool in_A;
-        bool in_B;
-
-        pwm_set_gpio_level(IRLED_A, (int)(PWM_PERIOD * 0.5));
-        sleep_us(150);
-        in_A = gpio_get(SENS);
-        //sleep_us(50);
-        pwm_set_gpio_level(IRLED_A, PWM_PERIOD);
-
-        sleep_us(400);
-
-        pwm_set_gpio_level(IRLED_B, (int)(PWM_PERIOD * 0.5));
-        sleep_us(150);
-        in_B = gpio_get(SENS);
-        //sleep_us(50);
-        pwm_set_gpio_level(IRLED_B, PWM_PERIOD);
-
-        char sens_state = 0x00;
-        if(in_A){
-            sens_state |= SENS_A;
-            gpio_put(LED_BLUE,0);
-        }
-        else{
-            gpio_put(LED_BLUE,1);
-        }
-
-        if(in_B){
-            sens_state |= SENS_B;
-            gpio_put(LED_RED,0);
-        }
-        else{
-            gpio_put(LED_RED,1);
-        }
-
+        sense();
         printf("%d\n",sens_state);
+
+        switch(state){
+            case NONE:
+                tim_count = 0;
+                if(sens_state){
+                    state = EDGE_DETECT;
+                    printf("edge = %d\n",sens_state);
+                }
+                break;
+            case EDGE_DETECT:
+                tim_count++;
+                if(tim_count > 100){
+                    printf("timeout %d\n",tim_count);
+                    state = NONE;
+                }
+                break;
+            case BOTH_DETECT:
+                break;
+            case THROUGH:
+                break;
+            default:
+                break;
+        }
     }
 
 
