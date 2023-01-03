@@ -32,7 +32,7 @@ int main() {
 
     //timer callback
     struct repeating_timer timer;
-    add_repeating_timer_ms(1000,repeating_timer_callback,NULL,&timer);
+    add_repeating_timer_ms(50,repeating_timer_callback,NULL,&timer);
 
     while(1){
         while(!timer_flag);
@@ -42,7 +42,7 @@ int main() {
 
         pwm_set_gpio_level(IRLED, (int)(PWM_PERIOD * 0.5));
         sleep_us(600*6);
-        sleep_ms(100);
+        //sleep_ms(100);
         pwm_set_gpio_level(IRLED, PWM_PERIOD);
 
         gpio_put(1,0);
