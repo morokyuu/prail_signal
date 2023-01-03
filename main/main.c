@@ -37,11 +37,9 @@ int main() {
 
 
     //PWM
-    gpio_set_function(IRLED_A,GPIO_FUNC_PWM);
     uint slice_num = pwm_gpio_to_slice_num(IRLED_A);
-
+    gpio_set_function(IRLED_A,GPIO_FUNC_PWM);
     gpio_set_function(IRLED_B,GPIO_FUNC_PWM);
-    //uint slice_num = pwm_gpio_to_slice_num(IRLED_B);
 
     pwm_config config;
     pwm_config_set_phase_correct(&config, false);
