@@ -55,8 +55,6 @@ int main() {
     struct repeating_timer timer;
     add_repeating_timer_ms(15,repeating_timer_callback,NULL,&timer);
 
-    pwm_set_enabled(slice_num,true);
-
     while(1){
         while(!timer_flag);
         timer_flag = false;
@@ -64,23 +62,19 @@ int main() {
         bool in_A;
         bool in_B;
 
-        //pwm_set_gpio_level(IRLED_A, (int)(PWM_PERIOD * 0.5));
-        pwm_set_chan_level(slice_num,PWM_CHAN_A,(int)(PWM_PERIOD * 0.5));
+        pwm_set_gpio_level(IRLED_A, (int)(PWM_PERIOD * 0.5));
         sleep_us(150);
         in_A = gpio_get(SENS);
         sleep_us(150);
-        pwm_set_chan_level(slice_num,PWM_CHAN_A,PWM_PERIOD);
-        //pwm_set_gpio_level(IRLED_A, PWM_PERIOD);
+        pwm_set_gpio_level(IRLED_A, PWM_PERIOD);
 
         sleep_us(500);
 
-        //pwm_set_gpio_level(IRLED_B, (int)(PWM_PERIOD * 0.5));
-        pwm_set_chan_level(slice_num,PWM_CHAN_B,(int)(PWM_PERIOD * 0.5));
+        pwm_set_gpio_level(IRLED_B, (int)(PWM_PERIOD * 0.5));
         sleep_us(150);
         in_B = gpio_get(SENS);
         sleep_us(150);
-        pwm_set_chan_level(slice_num,PWM_CHAN_B,PWM_PERIOD);
-        //pwm_set_gpio_level(IRLED_B, PWM_PERIOD);
+        pwm_set_gpio_level(IRLED_B, PWM_PERIOD);
 
         if(in_A){
             gpio_put(LED_BLUE,0);
