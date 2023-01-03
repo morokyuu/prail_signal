@@ -19,6 +19,10 @@ int main() {
     gpio_set_dir(1,GPIO_OUT);
     gpio_put(1,0);
 
+    gpio_init(0);
+    gpio_set_dir(0,GPIO_IN);
+
+
     //PWM
     gpio_set_function(IRLED,GPIO_FUNC_PWM);
     uint slice_num = pwm_gpio_to_slice_num(IRLED);
@@ -38,14 +42,19 @@ int main() {
         while(!timer_flag);
         timer_flag = false;
 
-        gpio_put(1,1);
 
         pwm_set_gpio_level(IRLED, (int)(PWM_PERIOD * 0.5));
-        sleep_us(600*6);
-        //sleep_ms(100);
+        sleep_us(150);
+        bool in = gpio_get(0);
+        sleep_us(150);
         pwm_set_gpio_level(IRLED, PWM_PERIOD);
 
-        gpio_put(1,0);
+        if(in){
+            gpio_put(1,0);
+        }
+        else{
+            gpio_put(1,1);
+        }
         //tight_loop_contents();
     }
 
