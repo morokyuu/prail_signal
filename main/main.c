@@ -3,7 +3,9 @@
 #include "hardware/pwm.h"
 
 const int PWM_PERIOD = 3300;
+
 const int IRLED = 2;
+const int SENS = 0;
 
 volatile bool timer_flag = false;
 
@@ -19,8 +21,8 @@ int main() {
     gpio_set_dir(1,GPIO_OUT);
     gpio_put(1,0);
 
-    gpio_init(0);
-    gpio_set_dir(0,GPIO_IN);
+    gpio_init(SENS);
+    gpio_set_dir(SENS,GPIO_IN);
 
 
     //PWM
@@ -36,7 +38,7 @@ int main() {
 
     //timer callback
     struct repeating_timer timer;
-    add_repeating_timer_ms(50,repeating_timer_callback,NULL,&timer);
+    add_repeating_timer_ms(15,repeating_timer_callback,NULL,&timer);
 
     while(1){
         while(!timer_flag);
@@ -45,7 +47,7 @@ int main() {
 
         pwm_set_gpio_level(IRLED, (int)(PWM_PERIOD * 0.5));
         sleep_us(150);
-        bool in = gpio_get(0);
+        bool in = gpio_get(SENS);
         sleep_us(150);
         pwm_set_gpio_level(IRLED, PWM_PERIOD);
 
