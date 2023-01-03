@@ -16,7 +16,7 @@ set(PRAIL_SIGNAL_PATH ${PROJECT_SOURCE_DIR})
 # Initialize the SDK
 pico_sdk_init()
 
-add_subdirectory(main)
+add_subdirectory(src)
 
 add_compile_options(-Wall
         -Wno-format          # int != int32_t as far as the compiler is concerned because gcc has int32_t as long int
