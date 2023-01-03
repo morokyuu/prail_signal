@@ -40,7 +40,6 @@ void sense(){
     pwm_set_gpio_level(IRLED_A, (int)(PWM_PERIOD * 0.5));
     sleep_us(150);
     in_A = gpio_get(SENS);
-    //sleep_us(50);
     pwm_set_gpio_level(IRLED_A, PWM_PERIOD);
 
     sleep_us(400);
@@ -48,7 +47,6 @@ void sense(){
     pwm_set_gpio_level(IRLED_B, (int)(PWM_PERIOD * 0.5));
     sleep_us(150);
     in_B = gpio_get(SENS);
-    //sleep_us(50);
     pwm_set_gpio_level(IRLED_B, PWM_PERIOD);
 
     if(in_A){
