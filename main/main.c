@@ -5,20 +5,10 @@
 const int PWM_PERIOD = 3300;
 const int IRLED = 2;
 
-int blink = 0;
-bool repeating_timer_callback(struct repeating_timer *t){
-//    pwm_set_gpio_level(IRLED, (int)(PWM_PERIOD * 0.5));
-//    sleep_us(600*6);
-//    pwm_set_gpio_level(IRLED, PWM_PERIOD);
+volatile bool timer_flag = false;
 
-    if(blink){
-        pwm_set_gpio_level(IRLED, (int)(PWM_PERIOD * 0.3));
-        blink = 0;
-    }
-    else{
-        pwm_set_gpio_level(IRLED, (int)(PWM_PERIOD * 0.5));
-        blink = 1;
-    }
+bool repeating_timer_callback(struct repeating_timer *t){
+    timer_flag = true;
     return true;
 }
 
@@ -44,8 +34,19 @@ int main() {
     struct repeating_timer timer;
     add_repeating_timer_ms(1000,repeating_timer_callback,NULL,&timer);
 
-    for(;;){
-        tight_loop_contents();
+    while(1){
+        while(!timer_flag);
+        timer_flag = false;
+
+        gpio_put(1,1);
+
+        pwm_set_gpio_level(IRLED, (int)(PWM_PERIOD * 0.5));
+        sleep_us(600*6);
+        sleep_ms(100);
+        pwm_set_gpio_level(IRLED, PWM_PERIOD);
+
+        gpio_put(1,0);
+        //tight_loop_contents();
     }
 
 
