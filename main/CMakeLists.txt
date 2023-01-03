@@ -12,3 +12,4 @@ pico_enable_stdio_uart(main 0)
 pico_add_extra_outputs(main)
 
 add_subdirectory(./state)
+
