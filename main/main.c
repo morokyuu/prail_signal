@@ -1,4 +1,4 @@
-
+#include <stdio.h>
 #include "pico/stdlib.h"
 #include "hardware/pwm.h"
 
@@ -12,6 +12,9 @@ const int LED_BLUE = 25;
 const int LED_GREEN = 16;
 const int LED_RED = 17;
 
+const char SENS_A = 0x01;
+const char SENS_B = 0x02;
+
 volatile bool timer_flag = false;
 
 bool repeating_timer_callback(struct repeating_timer *t){
@@ -20,6 +23,9 @@ bool repeating_timer_callback(struct repeating_timer *t){
 }
 
 int main() {
+    //serial
+    stdio_init_all();
+    printf("hello");
 
     //GPIO
     gpio_init(LED_BLUE);
@@ -74,7 +80,9 @@ int main() {
         sleep_us(150);
         pwm_set_gpio_level(IRLED_B, PWM_PERIOD);
 
+        char sens_state = 0x00;
         if(in_A){
+            sens_state |= SENS_A;
             gpio_put(LED_BLUE,0);
         }
         else{
@@ -82,12 +90,14 @@ int main() {
         }
 
         if(in_B){
+            sens_state |= SENS_B;
             gpio_put(LED_RED,0);
         }
         else{
             gpio_put(LED_RED,1);
         }
-        //tight_loop_contents();
+
+        printf("%d\n",sens_state);
     }
 
 
