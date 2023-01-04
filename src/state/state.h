@@ -6,6 +6,7 @@
 typedef struct{
     int timer_count;
     char sens_state;
+    char first_sens_state;
 } proc_state_param_t;
 
 void proc_state(proc_state_param_t *p);

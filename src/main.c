@@ -31,10 +31,8 @@ int main() {
 
     while(1){
         wait_timer();
-        printf("loop\n");
 
         sense(&(st_param.sens_state));
-        printf("%d\n",st_param.sens_state);
 
         proc_state(&st_param);
 
