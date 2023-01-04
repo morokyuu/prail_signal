@@ -6,6 +6,7 @@ const int IRLED_A = 2;
 const int IRLED_B = 3;
 const int SENS = 0;
 
+struct repeating_timer timer;
 volatile bool timer_flag = false;
 int tim_count = 0;
 
@@ -67,7 +68,5 @@ void init_sensor(void) {
     pwm_init(slice_num,&config,true);
 
     //timer callback
-//    struct repeating_timer timer;
-//    add_repeating_timer_ms(2,repeating_timer_callback,NULL,&timer);
-
+    add_repeating_timer_ms(2,repeating_timer_callback,NULL,&timer);
 }
