@@ -8,6 +8,6 @@ typedef struct{
     char sens_state;
 } proc_state_param_t;
 
-void proc_state(proc_state_param_t p);
+void proc_state(proc_state_param_t *p);
 
 #endif // MAIN_STATE_HEADER
