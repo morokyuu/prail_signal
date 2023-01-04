@@ -16,7 +16,7 @@ void wait_timer(void){
     timer_flag = false;
 }
 
-static bool repeating_timer_callback(struct repeating_timer *t){
+bool repeating_timer_callback(struct repeating_timer *t){
     timer_flag = true;
     return true;
 }
@@ -67,7 +67,7 @@ void init_sensor(void) {
     pwm_init(slice_num,&config,true);
 
     //timer callback
-    struct repeating_timer timer;
-    add_repeating_timer_ms(2,repeating_timer_callback,NULL,&timer);
+//    struct repeating_timer timer;
+//    add_repeating_timer_ms(2,repeating_timer_callback,NULL,&timer);
 
 }

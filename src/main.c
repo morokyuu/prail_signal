@@ -27,12 +27,13 @@ int main() {
 
 
     //sensor
-//    init_sensor();
-//    proc_state_param_t st_param;
+    init_sensor();
+    //proc_state_param_t st_param;
 
     while(1){
 //        wait_timer();
         printf("loop\n");
+        sleep_ms(100);
     /*
 
         sense(&(st_param.sens_state));
