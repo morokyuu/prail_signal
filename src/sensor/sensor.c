@@ -10,11 +10,18 @@ volatile bool timer_flag = false;
 int tim_count = 0;
 
 
-bool repeating_timer_callback(struct repeating_timer *t){
+//public
+void wait_timer(void){
+    while(!timer_flag);
+    timer_flag = false;
+}
+
+static bool repeating_timer_callback(struct repeating_timer *t){
     timer_flag = true;
     return true;
 }
 
+//public
 void sense(char *sens_state){
     bool in_A;
     bool in_B;

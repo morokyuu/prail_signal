@@ -11,4 +11,6 @@
 void init_sensor(void);
 void sense(char *sens_state);
 
+void wait_timer(void);
+
 #endif //PRAIL_SENSOR_HEADER
