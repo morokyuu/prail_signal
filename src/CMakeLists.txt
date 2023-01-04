@@ -2,7 +2,7 @@ add_executable(prail_signal main.c)
 
 # pull in common dependencies
 #target_link_libraries(prail_signal pico_stdlib hardware_pwm state sensor)
-target_link_libraries(prail_signal pico_stdlib hardware_pwm)
+target_link_libraries(prail_signal pico_stdlib hardware_pwm sensor)
 
 # usb-serial enable
 pico_enable_stdio_usb(prail_signal 1)
@@ -13,4 +13,4 @@ pico_add_extra_outputs(prail_signal)
 
 
 #add_subdirectory(state)
-#add_subdirectory(sensor)
+add_subdirectory(sensor)

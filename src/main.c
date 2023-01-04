@@ -2,7 +2,7 @@
 #include "pico/stdlib.h"
 //#include "hardware/pwm.h"
 
-//#include "sensor.h"
+#include "sensor.h"
 //#include "state.h"
 
 const int LED_BLUE = 25;
