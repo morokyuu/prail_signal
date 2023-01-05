@@ -29,6 +29,10 @@ int main() {
     init_sensor();
     proc_state_param_t st_param;
 
+    char *dirstr[] = {
+        "UNKNOWN","FORWARD","REVERSE"
+    };
+
     while(1){
         wait_timer();
 
@@ -36,9 +40,16 @@ int main() {
 
         proc_state(&st_param);
 
+        if(st_param.speed > 0){
+            printf("dir = %s, speed = %f\n"
+                ,dirstr[st_param.direction]
+                ,st_param.speed );
+        }
+
         int outA = st_param.sens_state & SENS_A;
         int outB = st_param.sens_state & SENS_B;
         gpio_put(LED_BLUE,outA);
         gpio_put(LED_RED,outB);
     }
 }
+
